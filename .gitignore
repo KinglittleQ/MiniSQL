@@ -1,0 +1,8 @@
+
+*.pyc
+*.block
+*.hd
+*.minisql
+DB/log.txt
+*.xml
+*.iml
