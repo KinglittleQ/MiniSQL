@@ -1,7 +1,8 @@
 create table student (
     ID char(20),
     name char(20),
-    age int
+    age int,
+    primary key (ID)
 );
 insert into student values (0000000000, 'deng', 18);
 insert into student values (0000000001, 'deng', 18);

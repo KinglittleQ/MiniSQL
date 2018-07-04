@@ -19,7 +19,7 @@ def insert(table, values, buf):
     record = []
     if len(values) == len(schema['types']):
         for t, v in zip(schema['types'], values):
-            record.append(convert_to(v, t))
+            record.append(_convert_to(v, t))
     else:
         raise MiniSQLError('values does not mach table schema')
 
@@ -109,7 +109,7 @@ def delete(table, condition, buf):
                 for i in table_blocks:
                     b = buf.get_block(i)
                     records = b.data()
-                    records = select_filter(records, col, op, value, schema_cols, schema_types, reverse=True)
+                    records = _select_filter(records, col, op, value, schema_cols, schema_types, reverse=True)
                     b.memory = records
                     if len(records) == 0:
                         buf.update_header(i, b, None)
@@ -167,7 +167,7 @@ def select(cols, table, condition, buf):
                 if op == '=' and col in index_cols:
                     col_index = index_cols.index(col)
                     tree = trees[col_index]
-                    value = convert_to(value, schema_types[col_index])
+                    value = _convert_to(value, schema_types[col_index])
                     ptrs = tree.search(value)
                     if isinstance(ptrs, list):
                         for p in ptrs:
@@ -216,14 +216,14 @@ def _select_without_index(table_blocks, buf, exps, schema_cols, schema_types):
             match = re.match(r'^([A-Za-z0-9_]+)\s*([<>=]+)\s*(.+)$', exp, re.S)
             if match and len(match.groups()) == 3:
                 col, op, value = match.groups()
-                records = select_filter(records, col, op, value, schema_cols, schema_types)
+                records = _select_filter(records, col, op, value, schema_cols, schema_types)
             else:
                 raise MiniSQLSyntaxError('Illegal condition: {}'.format(exp))
         return_records += records
     return return_records
 
 
-def convert_to(v, t):
+def _convert_to(v, t):
     if t == 0:
         return int(v)
     elif t == -1:
@@ -232,9 +232,9 @@ def convert_to(v, t):
         return v.strip("'")
 
 
-def select_filter(records, col, op, value, schema_cols, schema_types, reverse=False):
+def _select_filter(records, col, op, value, schema_cols, schema_types, reverse=False):
     col_index = schema_cols.index(col)
-    value = convert_to(value, schema_types[col_index])
+    value = _convert_to(value, schema_types[col_index])
 
     def f1(v):
         return v > value
@@ -272,4 +272,4 @@ def select_filter(records, col, op, value, schema_cols, schema_types, reverse=Fa
 
 
 if __name__ == '__main__':
-    print(convert_to("'hello'", 20))
+    print(_convert_to("'hello'", 20))

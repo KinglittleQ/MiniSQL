@@ -63,6 +63,8 @@ def create_index(index_name, table, col, buf):
     dump(schemas, table_schema_file)
     dump(tree, index_file)
 
+    log('create index {}'.format(index_name))
+
 
 def drop_index(index_name):
     index_file = index_file_prefix.format(index_name)
@@ -80,6 +82,8 @@ def drop_index(index_name):
                     s['index'].pop(i)
                     break
     dump(schemas, table_schema_file)
+
+    log('drop index {}'.format(index_name))
 
 
 def drop_table(table, buf):

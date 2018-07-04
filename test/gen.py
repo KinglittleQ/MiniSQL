@@ -1,4 +1,4 @@
-f = open('03.sql', 'w')
+f = open('04.sql', 'w')
 sql = '''insert into student values ({:0>10}, 'deng', 18);\n'''
 
 create_sql = '''create table student (
@@ -9,7 +9,7 @@ create_sql = '''create table student (
 
 f.write(create_sql)
 
-for i in range(10000):
+for i in range(100000):
     f.write(sql.format(i))
 
 f.close()

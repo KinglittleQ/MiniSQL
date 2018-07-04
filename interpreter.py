@@ -2,6 +2,7 @@ from enum import Enum
 from execption import MiniSQLSyntaxError
 from API import *
 from buffer_manager import *
+import time
 
 
 MiniSQLType = Enum('MiniSQLType', ('CREATE_TABLE', 'INSERT', 'DROP_TABLE', 'CREATE_INDEX',
@@ -36,33 +37,35 @@ def judge_type(query):
     raise MiniSQLSyntaxError('Error Type')
 
 
-def interpret(query, buf):
+def interpret(query, buf, exec_file=False):
     query_type = judge_type(query)
     # query = query.strip('; \n')
+
     if query_type == MiniSQLType.CREATE_TABLE:
-        return create_table(query)
+        ret = create_table(query)
     elif query_type == MiniSQLType.CREATE_INDEX:
-        return create_index(query, buf)
+        ret = create_index(query, buf)
     elif query_type == MiniSQLType.INSERT:
-        return insert(query, buf)
+        ret = insert(query, buf)
     elif query_type == MiniSQLType.SELECT:
-        return select(query, buf)
+        ret = select(query, buf)
     elif query_type == MiniSQLType.DELETE:
-        return delete(query, buf)
+        ret = delete(query, buf)
     elif query_type == MiniSQLType.DROP_INDEX:
-        return drop_index(query, buf)
+        ret = drop_index(query, buf)
     elif query_type == MiniSQLType.DROP_TABLE:
-        return drop_table(query, buf)
+        ret = drop_table(query, buf)
     elif query_type == MiniSQLType.QUIT:
-        return 0
+        ret = 0
     elif query_type == MiniSQLType.EXECFILE:
-        return execfile(query, buf)
+        ret = execfile(query, buf)
     elif query_type == MiniSQLType.CLEAR:
-        return clear_all(buf)
+        ret = clear_all(buf)
+
+    return ret
 
 
 def execfile(query, buf):
-    # file = query.strip(';').split()[-1]
     file = query.strip('; \n').split()[-1]
     with open(file, 'r') as f:
         query = ''
@@ -71,7 +74,7 @@ def execfile(query, buf):
             line = line.strip()
             if line and line[-1] == ';':
                 try:
-                    ret = interpret(query, buf)
+                    ret = interpret(query, buf, True)
                     if isinstance(ret, Buffer):
                         buf = Buffer
                     if ret == 0:
@@ -110,14 +113,21 @@ def main():
         if cmd and cmd[-1] == ';':
             # print(query)
             try:
+                beg = time.clock()
                 ret = interpret(query, buf)
+                end = time.clock()
+
                 if ret == 0:
                     break
                 elif isinstance(ret, (list, tuple)):
                     print_table(*ret)
+
             except MiniSQLError as e:
                 print(e)
+                end = beg
             query = ''
+
+            print('use time {}s'.format(end - beg))
 
     buf.close()
 
