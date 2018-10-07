@@ -1,4 +1,4 @@
-# <center>MiniSQL设计总报告</center>
+# <center>MiniSQL</center>
 
 ## 一、MiniSQL总体框架
 
@@ -369,6 +369,3 @@ exit;
 
 ![12](pic/12.png)
 
-## 五、分工
-
-本MiniSQL系统为我一个人独立完成，没有组队的情况。
