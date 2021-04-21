@@ -52,8 +52,8 @@ prompt-toolkit==1.0.15
 protobuf==3.5.1
 PyAudio==0.2.11
 pydub==0.22.0
-Pygments==2.2.0
 PyInstaller==3.6
+Pygments==2.7.4
 pyparsing==2.2.0
 pypinyin==0.30.1
 pypiwin32==223
